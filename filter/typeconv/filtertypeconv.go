@@ -76,10 +76,10 @@ func (f *FilterConfig) Event(ctx context.Context, event logevent.LogEvent) (loge
 			case convTypeInt64:
 				switch v := value.(type) {
 				case string:
-					if vparse, err := strconv.ParseInt(v, 10, 64); err == nil {
+					if vparse, err := strconv.ParseInt(v, 0, 64); err == nil {
 						event.SetValue(field, vparse)
 					} else if vparse, err := strconv.ParseFloat(fmt.Sprintf("%v", v), 64); err == nil {
-						event.SetValue(field, vparse)
+						event.SetValue(field, int64(vparse))
 					} else {
 						goglog.Logger.Error(err)
 						event.AddTag(ErrorTag)
@@ -110,7 +110,7 @@ func (f *FilterConfig) Event(ctx context.Context, event logevent.LogEvent) (loge
 			case convTypeFloat64:
 				switch v := value.(type) {
 				case string:
-					if vparse, err := strconv.ParseFloat(v, 32); err == nil {
+					if vparse, err := strconv.ParseFloat(v, 64); err == nil {
 						event.SetValue(field, vparse)
 					} else {
 						goglog.Logger.Error(err)
@@ -125,6 +125,7 @@ func (f *FilterConfig) Event(ctx context.Context, event logevent.LogEvent) (loge
 				case int32:
 					event.SetValue(field, float64(v))
 				case int64:
+					event.SetValue(field, float64(v))
 				case float32:
 					event.SetValue(field, float64(v))
 				case float64:
