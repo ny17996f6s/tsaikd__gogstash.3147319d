@@ -101,13 +101,13 @@ func (f *FilterConfig) Event(ctx context.Context, event logevent.LogEvent) (loge
 	}
 	if err != nil {
 		goglog.Logger.Errorf("parse param failed, %s, %v", message, err)
-		return event, true
+		return event, false
 	}
 
 	//url decode
 	if f.decodeAll {
 		for k, v := range params {
-			if nv, err := url.PathUnescape(v[len(v)-1]); err != nil {
+			if nv, err := url.PathUnescape(v[0]); err != nil {
 				params.Set(k, nv)
 			}
 		}
@@ -125,11 +125,11 @@ func (f *FilterConfig) Event(ctx context.Context, event logevent.LogEvent) (loge
 	if f.includeAll {
 		for k, v := range params {
 			k := f.Prefix + k
-			event.SetValue(k, v[len(v)-1])
+			event.SetValue(k, v[0])
 		}
 	} else {
 		for _, k := range f.IncludeKeys {
-			if v := params.Get(k); !f.RemoveEmptyValues && v != "" {
+			if v := params.Get(k); !f.RemoveEmptyValues || v != "" {
 				k := f.Prefix + k
 				event.SetValue(k, v)
 			}
