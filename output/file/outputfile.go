@@ -163,13 +163,18 @@ func (t *OutputConfig) Output(ctx context.Context, event logevent.LogEvent) (err
 				fileChanged := false
 				select {
 				case msg := <-channel:
-					msgToWrite := []byte(fmt.Sprintf("%s", msg))
+					msgToWrite := []byte(fmt.Sprintf("%s\n", msg))
 					written, err := file.Write(msgToWrite)
 					if os.IsNotExist(err) && t.CreateIfDeleted {
 						// re-create file if it was deleted and configured as such
 						file, err = t.createFile(path)
 						if err != nil {
 							goglog.Logger.Errorf("problems re-creating file. Routine will not write anything else to file %s. %v.\n", path, err)
+							return
+						}
+						written, err = file.Write(msgToWrite)
+						if err != nil {
+							goglog.Logger.Errorf("problems writting after re-creating file. Routine will not write anything else to file %s. %v.\n", path, err)
 							return
 						}
 					}
@@ -195,7 +200,7 @@ func (t *OutputConfig) Output(ctx context.Context, event logevent.LogEvent) (err
 		}()
 	}
 
-	log := event.Format(t.Path)
+	log := event.Format(t.Codec)
 	channel <- log
 	return
 }
